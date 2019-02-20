@@ -16,9 +16,29 @@ app.use(express.static(publicPath));
 //connection is build-in event 
 io.on('connection',(socket)=>{
     console.log('New user connected');
+
     //listening to disconnect event on server side
+    socket.emit('newEmail',{
+        from:"madhu@gmail.com",
+        text:"Hi Madhu",
+        createdAt: new Date().getDate()+ '-' + new Date().getMonth() + '-' + new Date().getFullYear() 
+    });
+    socket.on('createEmail',(email)=>{
+        console.log(email);
+    });
+
     socket.on('disconnect',()=>{
         console.log('User disconnected');
+    });
+
+    socket.emit('newMessage',{
+        from:"madhu",
+        text:"Hi Madhu",
+        createdAt: new Date().getDate() + '-' + new Date().getMonth() + '-' + new Date().getFullYear()
+    });
+
+    socket.on('createMessage',(message)=>{
+        console.log('create new chat message',message);
     });
 });
 

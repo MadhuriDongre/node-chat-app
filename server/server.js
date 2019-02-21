@@ -3,6 +3,7 @@ const express = require("express");
 const socketIO = require("socket.io");
 const http =require('http');
 
+const { generateMessage } = require('./utils/message');
 const publicPath = path.join(__dirname,'../public');
 const port = process.env.PORT || 3000;
 const app = express();
@@ -17,48 +18,15 @@ app.use(express.static(publicPath));
 io.on('connection',(socket)=>{
     console.log('New user connected');
 
-    //listening to disconnect event on server side
-    socket.emit('newEmail',{
-        from:"madhu@gmail.com",
-        text:"Hi Madhu",
-        createdAt: new Date().getDate()+ '-' + new Date().getMonth() + '-' + new Date().getFullYear() 
-    });
-    socket.on('createEmail',(email)=>{
-        console.log(email);
-    });
-    socket.emit('newMessage',{
-        from:"Admin",
-        text:"Welcome to the Chat App",
-        createdAt: new Date().getDate() + '-' + new Date().getMonth() + '-' + new Date().getFullYear() 
-    });
-
-    socket.broadcast.emit('newMessage', {
-        from: "Admin",
-        text: "New user joined the chat room!!!",
-        createdAt: new Date().getDate() + '-' + new Date().getMonth() + '-' + new Date().getFullYear() 
-    });
+    socket.emit('newMessage', generateMessage("Admin", "Welcome to the Chat App"));
+    socket.broadcast.emit('newMessage', generateMessage("Admin", "New user joined the chat room!!!"));
     socket.on('disconnect',()=>{
         console.log('User disconnected');
     });
 
-    // socket.emit('newMessage',{
-    //     from:"madhu",
-    //     text:"Hi Madhu",
-    //     createdAt: new Date().getDate() + '-' + new Date().getMonth() + '-' + new Date().getFullYear()
-    // });
-
     socket.on('createMessage',(message)=>{
         console.log('create new chat message',message);
-        io.emit('newMessage',{
-            from: message.from,
-            text: message.text,
-            createdAt: new Date().getDate() + '-' + new Date().getMonth() + '-' + new Date().getFullYear()
-        });
-        // socket.broadcast.emit('newMessage',{
-        //     from: message.from,
-        //     text: message.text,
-        //     createdAt: new Date().getDate() + '-' + new Date().getMonth() + '-' + new Date().getFullYear()
-        // });
+        io.emit('newMessage', generateMessage(message.from, message.text));
     });
 });
 

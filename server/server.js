@@ -26,7 +26,17 @@ io.on('connection',(socket)=>{
     socket.on('createEmail',(email)=>{
         console.log(email);
     });
+    socket.emit('newMessage',{
+        from:"Admin",
+        text:"Welcome to the Chat App",
+        createdAt: new Date().getDate() + '-' + new Date().getMonth() + '-' + new Date().getFullYear() 
+    });
 
+    socket.broadcast.emit('newMessage', {
+        from: "Admin",
+        text: "New user joined the chat room!!!",
+        createdAt: new Date().getDate() + '-' + new Date().getMonth() + '-' + new Date().getFullYear() 
+    });
     socket.on('disconnect',()=>{
         console.log('User disconnected');
     });
@@ -43,7 +53,12 @@ io.on('connection',(socket)=>{
             from: message.from,
             text: message.text,
             createdAt: new Date().getDate() + '-' + new Date().getMonth() + '-' + new Date().getFullYear()
-        })
+        });
+        // socket.broadcast.emit('newMessage',{
+        //     from: message.from,
+        //     text: message.text,
+        //     createdAt: new Date().getDate() + '-' + new Date().getMonth() + '-' + new Date().getFullYear()
+        // });
     });
 });
 

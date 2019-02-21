@@ -31,14 +31,19 @@ io.on('connection',(socket)=>{
         console.log('User disconnected');
     });
 
-    socket.emit('newMessage',{
-        from:"madhu",
-        text:"Hi Madhu",
-        createdAt: new Date().getDate() + '-' + new Date().getMonth() + '-' + new Date().getFullYear()
-    });
+    // socket.emit('newMessage',{
+    //     from:"madhu",
+    //     text:"Hi Madhu",
+    //     createdAt: new Date().getDate() + '-' + new Date().getMonth() + '-' + new Date().getFullYear()
+    // });
 
     socket.on('createMessage',(message)=>{
         console.log('create new chat message',message);
+        io.emit('newMessage',{
+            from: message.from,
+            text: message.text,
+            createdAt: new Date().getDate() + '-' + new Date().getMonth() + '-' + new Date().getFullYear()
+        })
     });
 });
 

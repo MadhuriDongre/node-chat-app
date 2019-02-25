@@ -1,4 +1,24 @@
 let socket = io();
+
+function scrollToBottom(){
+    //selectors
+    let message = $('#messages');
+    let newMesage = message.children('li:last-child');
+
+    //height
+    let clientHeight = message.prop('clientHeight');
+    let scrollTop = message.prop('scrollTop');
+    let scrollHeight = message.prop('scrollHeight');
+
+    let newMessageHeight = newMesage.innerHeight();
+    let lastMessageHeight = newMesage.prev().innerHeight();
+
+    if (clientHeight + scrollTop + newMessageHeight + lastMessageHeight >= scrollHeight ){
+        message.scrollTop(scrollHeight);
+    }
+
+};
+
 // listening on client side for connect event
 socket.on('connect', function () {
     console.log('connected to server');
@@ -18,6 +38,7 @@ socket.on('newMessage', function(message){
         createdAt: formattedTime
     });
     $('#messages').append(html);
+    scrollToBottom();
 });
 
 socket.on('newLocationMessage',function(message){
@@ -29,6 +50,7 @@ socket.on('newLocationMessage',function(message){
         createdAt: formattedTime
     });
     $('#messages').append(html);
+    scrollToBottom();
 });
 
 $('#message-form').on('submit', function(e){
